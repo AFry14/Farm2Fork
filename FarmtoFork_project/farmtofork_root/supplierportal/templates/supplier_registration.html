@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}
+<h1>Register as a Supplier</h1>
+{% endblock %}
+
+{% block content %}
+<h2>Join Farm to Fork</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Submit Application</button>
+</form>
+{% endblock %}

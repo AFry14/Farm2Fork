@@ -1,0 +1,130 @@
+html {
+    background-color: #4d4d4d;
+    align-items: center;
+
+ }
+
+
+body {
+    width: auto;
+    margin-left: 50px;
+    margin-right: 50px;
+    background-color: #DDDDDD;
+    padding: 25px;
+    font-family: 'Comic Neue', cursive;
+}
+
+h1 {
+    color: rgb(31, 160, 196);
+    font-family: 'Yellowtail', cursive;
+    font-size: 20pt;
+    font-weight: bold;
+}
+
+p {
+    color: black;
+    font-family: 'Comic Neue', cursive;
+    font-weight: bold;
+    font-size: xx-large;
+}
+
+.photo {
+    width: 200px;
+    border: 5px solid #999999;
+    box-shadow: 5px 5px 5px black;
+    padding: 5px;
+    margin-left : 20px;
+    margin-bottom: 20px;
+}
+
+.floatRight {
+    float: right;
+    padding-right: 200px;
+    background-color: #DDDDDD;
+}
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #00a4f7;
+  }
+  
+  li {
+    float: left;
+  }
+  
+  li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 16px;
+    text-decoration: none;
+  }
+  
+  li a:hover {
+    background-color: #30c8ff;
+  }
+
+.td {
+  padding-right: 100px;
+  padding-top: 25px;
+  font-weight: bold;
+  font-family: 'Comic Neue', cursive;
+  font-size:xx-large;
+}
+
+.rowseparator {
+  background-color: #00a4f7;
+  height: 50px;
+}
+
+.bookings {
+  width: 3000px;
+}
+
+.centered {
+  text-align:center;
+}
+
+.rowspacer {
+  padding-top: 50px;
+}
+
+.superspacer {
+  padding-top: 400px;
+
+}
+
+.footer {
+  color: #2587b8;
+  text-align: center;
+  font-size: x-small;
+  font-family: 'Comic Neue', cursive;
+}
+
+.ulnormal {
+  color: #2587b8;
+  list-style: circle;
+  display: list-item;
+  font-family: 'Comic Neue', cursive;
+  font-size: xx-large;
+  background-color: #DDDDDD;
+  float:none;
+  padding-bottom:15px;}
+
+.normal {
+  color: #2587b8;
+  font-family: 'Comic Neue', cursive;
+  font-size: xx-large;
+  background-color: #DDDDDD;
+  float:none;
+}
+
+.sitemap {
+  color: blue;
+  text-align: center;
+  font-size: large;
+  font-family: 'Comic Neue', cursive;
+}
