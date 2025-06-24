@@ -1,0 +1,14 @@
+<h1>Vendor List</h1>
+<ul>
+    {% for vendor in vendors %}
+        <li>{{ vendor.name }},
+            {{ vendor.description }},
+            {{ vendor.email }},
+            {{ vendor.phone }},
+            {{ vendor.address }},
+            {{ vendor.city }},
+            {{ vendor.state }},
+            {{ vendor.zip_code }},
+            {{ vendor.country }}</li>
+    {% endfor %}
+</ul>
