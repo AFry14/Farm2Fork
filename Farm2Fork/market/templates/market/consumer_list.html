@@ -1,0 +1,14 @@
+<h1>Consumer List</h1>
+<ul>
+    {% for consumer in consumers %}
+        <li>{{ consumer.name }},
+            {{ consumer.is_active}},
+            {{ consumer.email }},
+            {{ consumer.phone }},
+            {{ consumer.address }},
+            {{ consumer.city }},
+            {{ consumer.state }},
+            {{ consumer.zip_code }},
+            {{ consumer.country }}</li>
+    {% endfor %}
+</ul>

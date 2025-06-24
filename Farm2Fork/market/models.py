@@ -1,5 +1,6 @@
 from django.db import models
 
+# vendors table - this houses required info for vendors (a vendor record) - once users table is defined, much of this can be removed
 class Vendor(models.Model):
     name = models.CharField(max_length=100, unique=True)
     description = models.TextField(blank=True, null=True)
@@ -34,3 +35,25 @@ class Product(models.Model):
         return self.name
 
 # Create your models here.
+
+# consumers table - this will house required info for consumer users (a consumer record) - once users table is defined, much of this can be removed
+class Consumer(models.Model):
+    name = models.CharField(max_length=100)
+    is_active = models.BooleanField()
+    email = models.EmailField()
+    phone_number = models.CharField(max_length=15)
+    address = models.TextField(blank=True, null=True)
+    city = models.CharField(max_length=100)
+    state = models.CharField(max_length=100)
+    zip_code = models.CharField(max_length=10)
+    country = models.CharField(max_length=100)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+
+# users table - this will house user info with user_type (vendor/consumer)
+
+# ordes table - this will contain order records (user & vendor IDs required)
+
