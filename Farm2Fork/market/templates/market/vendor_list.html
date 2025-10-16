@@ -3,6 +3,7 @@
     {% for vendor in vendors %}
         <li>{{ vendor.name }},
             {{ vendor.description }},
+            {{ vendor.products.all }},
             {{ vendor.email }},
             {{ vendor.phone }},
             {{ vendor.address }},
