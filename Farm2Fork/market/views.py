@@ -31,22 +31,34 @@ def market_home(request):
         vendors_with_category = vendors.filter(products__category=category_filter).distinct()
         vendors = vendors_with_category
     
-    # Filter by price range if specified
+    # Filter by price range if specified - include vendors who have ANY products in range
     if min_price or max_price:
         filtered_vendors = []
         for vendor in vendors:
             vendor_products = vendor.products.all()
             if vendor_products.exists():
-                prices = [p.price for p in vendor_products]
-                vendor_min = min(prices)
-                vendor_max = max(prices)
+                # Check if vendor has ANY products within the price range
+                has_products_in_range = False
                 
-                if min_price and vendor_min < float(min_price):
-                    continue
-                if max_price and vendor_max > float(max_price):
-                    continue
+                if min_price and max_price:
+                    # Both min and max specified
+                    has_products_in_range = vendor_products.filter(
+                        price__gte=float(min_price),
+                        price__lte=float(max_price)
+                    ).exists()
+                elif min_price:
+                    # Only min price specified
+                    has_products_in_range = vendor_products.filter(
+                        price__gte=float(min_price)
+                    ).exists()
+                elif max_price:
+                    # Only max price specified
+                    has_products_in_range = vendor_products.filter(
+                        price__lte=float(max_price)
+                    ).exists()
                 
-                filtered_vendors.append(vendor)
+                if has_products_in_range:
+                    filtered_vendors.append(vendor)
         vendors = filtered_vendors
     
     # Get all available categories for filter dropdown
@@ -62,8 +74,24 @@ def market_home(request):
     else:
         price_range = {'min': 0, 'max': 0}
     
+    # Add price warning information to each vendor
+    vendors_with_warnings = []
+    for vendor in vendors:
+        vendor_dict = {
+            'vendor': vendor,
+            'has_products_below_min': False,
+            'has_products_above_max': False,
+        }
+        
+        if min_price:
+            vendor_dict['has_products_below_min'] = vendor.has_products_below_price(min_price)
+        if max_price:
+            vendor_dict['has_products_above_max'] = vendor.has_products_above_price(max_price)
+            
+        vendors_with_warnings.append(vendor_dict)
+    
     context = {
-        'vendors': vendors,
+        'vendors_with_warnings': vendors_with_warnings,
         'search_query': search_query,
         'location_filter': location_filter,
         'category_filter': category_filter,

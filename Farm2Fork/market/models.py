@@ -43,6 +43,14 @@ class Vendor(models.Model):
                 return f"${min_price}"
             return f"${min_price} - ${max_price}"
         return "No products"
+    
+    def has_products_below_price(self, min_price):
+        """Check if vendor has products below the specified minimum price"""
+        return self.products.filter(price__lt=float(min_price)).exists()
+    
+    def has_products_above_price(self, max_price):
+        """Check if vendor has products above the specified maximum price"""
+        return self.products.filter(price__gt=float(max_price)).exists()
 
 class Product(models.Model):
     CATEGORY_CHOICES = [

@@ -8,6 +8,11 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.stdout.write('Creating sample vendors...')
         
+        # Clear existing data
+        Vendor.objects.all().delete()
+        Product.objects.all().delete()
+        Review.objects.all().delete()
+        
         # Create vendors
         vendor1 = Vendor.objects.create(
             name="Green Valley Organic Farm",
@@ -61,6 +66,42 @@ class Command(BaseCommand):
             is_active=True,
             is_verified=True,
             feature_priority=3
+        )
+
+        vendor4 = Vendor.objects.create(
+            name="Budget Fresh Market",
+            description="Affordable fresh produce for budget-conscious families. Quality vegetables and fruits at everyday low prices.",
+            story_mission="Making fresh, healthy food accessible to everyone. We believe good nutrition shouldn't break the bank.",
+            email="info@budgetfresh.com",
+            phone="(555) 321-0987",
+            address="100 Main Street",
+            city="Decatur",
+            state="Illinois",
+            zip_code="62523",
+            country="USA",
+            service_area="Central Illinois",
+            ships_goods=False,
+            is_active=True,
+            is_verified=True,
+            feature_priority=4
+        )
+
+        vendor5 = Vendor.objects.create(
+            name="Luxury Artisan Foods",
+            description="Premium gourmet products and specialty items for discerning customers. Handcrafted, artisanal quality.",
+            story_mission="Crafting exceptional food experiences through traditional methods and premium ingredients. For those who appreciate the finest.",
+            email="concierge@luxuryartisan.com",
+            phone="(555) 654-3210",
+            address="500 Elite Avenue",
+            city="Champaign",
+            state="Illinois",
+            zip_code="61820",
+            country="USA",
+            service_area="Central Illinois and Chicago area",
+            ships_goods=True,
+            is_active=True,
+            is_verified=True,
+            feature_priority=5
         )
 
         self.stdout.write('Creating sample products...')
@@ -168,6 +209,84 @@ class Command(BaseCommand):
             price=24.99,
             category="meat",
             vendor=vendor3
+        )
+
+        # Create products for Budget Fresh Market (Low prices)
+        Product.objects.create(
+            name="Basic Potatoes",
+            description="Fresh russet potatoes. Perfect for baking, mashing, or frying.",
+            price=1.99,
+            category="vegetables",
+            is_featured=True,
+            vendor=vendor4
+        )
+
+        Product.objects.create(
+            name="Standard Onions",
+            description="Yellow cooking onions. Essential kitchen staple.",
+            price=0.99,
+            category="vegetables",
+            vendor=vendor4
+        )
+
+        Product.objects.create(
+            name="Regular Bananas",
+            description="Fresh bananas. Great for snacking or baking.",
+            price=1.49,
+            category="fruits",
+            is_featured=True,
+            vendor=vendor4
+        )
+
+        Product.objects.create(
+            name="Basic Lettuce",
+            description="Fresh iceberg lettuce. Crisp and refreshing for salads.",
+            price=1.25,
+            category="vegetables",
+            vendor=vendor4
+        )
+
+        # Create products for Luxury Artisan Foods (High prices)
+        Product.objects.create(
+            name="Truffle Oil",
+            description="Premium black truffle oil. Imported from Italy. Luxurious finishing oil.",
+            price=89.99,
+            category="other",
+            is_featured=True,
+            vendor=vendor5
+        )
+
+        Product.objects.create(
+            name="Aged Balsamic Vinegar",
+            description="25-year aged balsamic vinegar from Modena. Complex, rich flavor.",
+            price=149.99,
+            category="other",
+            is_featured=True,
+            vendor=vendor5
+        )
+
+        Product.objects.create(
+            name="Artisan Cheese Board",
+            description="Curated selection of rare cheeses from around the world.",
+            price=125.00,
+            category="dairy",
+            vendor=vendor5
+        )
+
+        Product.objects.create(
+            name="Wagyu Beef",
+            description="Premium A5 Wagyu beef. The finest beef in the world.",
+            price=299.99,
+            category="meat",
+            vendor=vendor5
+        )
+
+        Product.objects.create(
+            name="Exotic Mushroom Mix",
+            description="Seasonal selection of wild foraged mushrooms. Chef's choice varieties.",
+            price=45.00,
+            category="vegetables",
+            vendor=vendor5
         )
 
         self.stdout.write('Creating sample reviews...')

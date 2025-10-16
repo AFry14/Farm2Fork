@@ -94,6 +94,18 @@
             font-weight: bold;
             margin: 5px 0;
         }
+        .price-warning {
+            color: #856404;
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 4px;
+            padding: 5px 8px;
+            margin: 5px 0;
+            font-size: 0.85em;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
         .vendor-description {
             margin: 10px 0;
             line-height: 1.4;
@@ -156,21 +168,35 @@
         </form>
     </div>
 
-    {% if vendors %}
+    {% if vendors_with_warnings %}
         <div class="vendors-grid">
-            {% for vendor in vendors %}
-                <div class="vendor-card">
-                    <h3><a href="{% url 'vendor_detail' vendor.id %}" style="color: #2c5530; text-decoration: none;">{{ vendor.name }}</a></h3>
-                    <div class="vendor-location">📍 {{ vendor.city }}, {{ vendor.state }}</div>
-                    {% if vendor.average_rating > 0 %}
-                        <div class="vendor-rating">⭐ {{ vendor.average_rating }}/5.0</div>
-                    {% else %}
-                        <div class="vendor-rating">⭐ No reviews yet</div>
-                    {% endif %}
-                    <div class="vendor-price-range">💰 {{ vendor.price_range }}</div>
-                    <div class="vendor-description">{{ vendor.description|truncatewords:20 }}</div>
-                    <a href="{% url 'vendor_detail' vendor.id %}" class="contact-btn">View Profile</a>
-                </div>
+            {% for vendor_data in vendors_with_warnings %}
+                {% with vendor_data.vendor as vendor %}
+                    <div class="vendor-card">
+                        <h3><a href="{% url 'vendor_detail' vendor.id %}" style="color: #2c5530; text-decoration: none;">{{ vendor.name }}</a></h3>
+                        <div class="vendor-location">📍 {{ vendor.city }}, {{ vendor.state }}</div>
+                        {% if vendor.average_rating > 0 %}
+                            <div class="vendor-rating">⭐ {{ vendor.average_rating }}/5.0</div>
+                        {% else %}
+                            <div class="vendor-rating">⭐ No reviews yet</div>
+                        {% endif %}
+                        <div class="vendor-price-range">💰 {{ vendor.price_range }}</div>
+                        {% if vendor_data.has_products_below_min %}
+                            <div class="price-warning">
+                                <span>⚠️</span>
+                                <span>Some products below your minimum price</span>
+                            </div>
+                        {% endif %}
+                        {% if vendor_data.has_products_above_max %}
+                            <div class="price-warning">
+                                <span>⚠️</span>
+                                <span>Some products exceed your max price</span>
+                            </div>
+                        {% endif %}
+                        <div class="vendor-description">{{ vendor.description|truncatewords:20 }}</div>
+                        <a href="{% url 'vendor_detail' vendor.id %}" class="contact-btn">View Profile</a>
+                    </div>
+                {% endwith %}
             {% endfor %}
         </div>
     {% else %}
