@@ -4,6 +4,7 @@ from django.db import models
 class Vendor(models.Model):
     name = models.CharField(max_length=100, unique=True)
     description = models.TextField(blank=True, null=True)
+    story_mission = models.TextField(blank=True, null=True, help_text="Vendor's story and mission")
     email = models.EmailField()
     phone = models.CharField(max_length=15)
     address = models.TextField(blank=True, null=True)
@@ -11,28 +12,87 @@ class Vendor(models.Model):
     state = models.CharField(max_length=100)
     zip_code = models.CharField(max_length=10)
     country = models.CharField(max_length=100)
+    service_area = models.TextField(blank=True, null=True, help_text="Geographic areas where vendor provides service")
+    ships_goods = models.BooleanField(default=False, help_text="Whether vendor ships products")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    is_active = models.BooleanField()
-    is_verified = models.BooleanField()
-    feature_priority = models.IntegerField()
+    is_active = models.BooleanField(default=True)
+    is_verified = models.BooleanField(default=False)
+    feature_priority = models.IntegerField(default=0)
 
     def __str__(self):
         return self.name
+    
+    @property
+    def average_rating(self):
+        """Calculate average rating from reviews"""
+        reviews = self.reviews.all()
+        if reviews.exists():
+            return round(sum(review.rating for review in reviews) / reviews.count(), 1)
+        return 0
+    
+    @property
+    def price_range(self):
+        """Get price range of vendor's products"""
+        products = self.products.all()
+        if products.exists():
+            prices = [product.price for product in products]
+            min_price = min(prices)
+            max_price = max(prices)
+            if min_price == max_price:
+                return f"${min_price}"
+            return f"${min_price} - ${max_price}"
+        return "No products"
 
 class Product(models.Model):
+    CATEGORY_CHOICES = [
+        ('vegetables', 'Vegetables'),
+        ('fruits', 'Fruits'),
+        ('dairy', 'Dairy'),
+        ('meat', 'Meat'),
+        ('grains', 'Grains'),
+        ('herbs', 'Herbs'),
+        ('prepared', 'Prepared Foods'),
+        ('other', 'Other'),
+    ]
+    
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True)
     price = models.DecimalField(max_digits=6, decimal_places=2)
+    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='other')
+    is_featured = models.BooleanField(default=False, help_text="Featured products appear at top of vendor page")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE, related_name='products')
     
     class Meta:
         app_label = 'market'
+        ordering = ['-is_featured', 'name']
     
     def __str__(self):
         return self.name
+
+class Review(models.Model):
+    RATING_CHOICES = [
+        (1, '1 Star'),
+        (2, '2 Stars'),
+        (3, '3 Stars'),
+        (4, '4 Stars'),
+        (5, '5 Stars'),
+    ]
+    
+    vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE, related_name='reviews')
+    consumer_name = models.CharField(max_length=100, help_text="Name of the reviewer")
+    rating = models.IntegerField(choices=RATING_CHOICES)
+    comment = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        app_label = 'market'
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"{self.consumer_name} - {self.rating} stars for {self.vendor.name}"
 
 # Create your models here.
 

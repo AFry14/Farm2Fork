@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farm2Fork Market</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .header {
+            background-color: #2c5530;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .search-filters {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .search-form {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+            gap: 15px;
+            align-items: end;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .form-group label {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input, .form-group select {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        .btn-primary {
+            background-color: #2c5530;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #1e3a21;
+        }
+        .vendors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .vendor-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        .vendor-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        .vendor-card h3 {
+            margin-top: 0;
+            color: #2c5530;
+        }
+        .vendor-location {
+            color: #666;
+            font-size: 0.9em;
+            margin: 5px 0;
+        }
+        .vendor-rating {
+            color: #ffc107;
+            margin: 5px 0;
+        }
+        .vendor-price-range {
+            color: #28a745;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+        .vendor-description {
+            margin: 10px 0;
+            line-height: 1.4;
+        }
+        .contact-btn {
+            background-color: #28a745;
+            color: white;
+            padding: 8px 16px;
+            text-decoration: none;
+            border-radius: 4px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        .contact-btn:hover {
+            background-color: #218838;
+        }
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🌽 Farm2Fork Market</h1>
+        <p>Connect with local farmers and producers</p>
+    </div>
+
+    <div class="search-filters">
+        <form method="GET" class="search-form">
+            <div class="form-group">
+                <label for="search">Search Vendors:</label>
+                <input type="text" id="search" name="search" value="{{ search_query }}" placeholder="Search by name or description...">
+            </div>
+            <div class="form-group">
+                <label for="location">Location:</label>
+                <input type="text" id="location" name="location" value="{{ location_filter }}" placeholder="City, state, or region...">
+            </div>
+            <div class="form-group">
+                <label for="category">Product Category:</label>
+                <select id="category" name="category">
+                    <option value="">All Categories</option>
+                    {% for value, label in categories %}
+                        <option value="{{ value }}" {% if category_filter == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="min_price">Min Price:</label>
+                <input type="number" id="min_price" name="min_price" value="{{ min_price }}" placeholder="0" step="0.01">
+            </div>
+            <div class="form-group">
+                <label for="max_price">Max Price:</label>
+                <input type="number" id="max_price" name="max_price" value="{{ max_price }}" placeholder="100" step="0.01">
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </div>
+        </form>
+    </div>
+
+    {% if vendors %}
+        <div class="vendors-grid">
+            {% for vendor in vendors %}
+                <div class="vendor-card">
+                    <h3><a href="{% url 'vendor_detail' vendor.id %}" style="color: #2c5530; text-decoration: none;">{{ vendor.name }}</a></h3>
+                    <div class="vendor-location">📍 {{ vendor.city }}, {{ vendor.state }}</div>
+                    {% if vendor.average_rating > 0 %}
+                        <div class="vendor-rating">⭐ {{ vendor.average_rating }}/5.0</div>
+                    {% else %}
+                        <div class="vendor-rating">⭐ No reviews yet</div>
+                    {% endif %}
+                    <div class="vendor-price-range">💰 {{ vendor.price_range }}</div>
+                    <div class="vendor-description">{{ vendor.description|truncatewords:20 }}</div>
+                    <a href="{% url 'vendor_detail' vendor.id %}" class="contact-btn">View Profile</a>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="no-results">
+            <h3>No vendors found</h3>
+            <p>Try adjusting your search criteria or browse all vendors.</p>
+        </div>
+    {% endif %}
+</body>
+</html>
