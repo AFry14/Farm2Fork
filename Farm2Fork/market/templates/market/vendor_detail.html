@@ -140,7 +140,8 @@
             border-radius: 8px;
             padding: 15px;
             transition: transform 0.2s;
-            cursor: pointer;
+            display: flex;
+            flex-direction: column;
         }
         .product-card:hover {
             transform: translateY(-2px);
@@ -149,6 +150,9 @@
         .product-card.expanded {
             border-color: #2c5530;
             background-color: #f8f9fa;
+        }
+        .product-header {
+            cursor: pointer;
         }
         .product-name {
             font-weight: bold;
@@ -168,6 +172,58 @@
         }
         .product-description.show {
             display: block;
+        }
+        .product-actions {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+        .add-to-cart-form {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .quantity-input {
+            width: 60px;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .btn-add-cart {
+            background-color: #28a745;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            flex: 1;
+        }
+        .btn-add-cart:hover {
+            background-color: #218838;
+        }
+        .btn-add-cart:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        .login-prompt {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 0.9em;
+            color: #856404;
+        }
+        .login-prompt a {
+            color: #2c5530;
+            text-decoration: underline;
         }
         .reviews-section {
             margin-top: 30px;
@@ -210,10 +266,37 @@
 <body>
     <div class="header">
         <a href="{% url 'market_home' %}" class="back-btn">← Back to Market</a>
-        <h1>🌽 Farm2Fork</h1>
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <h1 style="margin: 0;">🌽 Farm2Fork</h1>
+            {% if user.is_authenticated %}
+                <a href="{% url 'cart_detail' vendor.id %}" class="back-btn" style="position: relative;">
+                    🛒 Cart
+                    {% if cart_item_count > 0 %}
+                        <span style="position: absolute; top: -8px; right: -8px; background-color: #ffc107; color: #000; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold;">{{ cart_item_count }}</span>
+                    {% endif %}
+                </a>
+                <a href="{% url 'my_carts' %}" class="back-btn">My Carts</a>
+            {% endif %}
+        </div>
     </div>
 
     <div class="container">
+        {% if messages %}
+            <div class="messages" style="margin-bottom: 20px;">
+                {% for message in messages %}
+                    <div class="message message-{{ message.tags }}" style="padding: 15px; margin-bottom: 10px; border-radius: 4px;">
+                        {% if message.tags == 'success' %}
+                            <div style="background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; padding: 15px; border-radius: 4px;">{{ message }}</div>
+                        {% elif message.tags == 'error' %}
+                            <div style="background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; padding: 15px; border-radius: 4px;">{{ message }}</div>
+                        {% else %}
+                            <div style="background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; padding: 15px; border-radius: 4px;">{{ message }}</div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        
         <div class="vendor-info">
             <div class="vendor-header">
                 <div class="vendor-details">
@@ -283,11 +366,29 @@
                             <h2 class="section-title">⭐ Featured Products</h2>
                             <div class="products-grid">
                                 {% for product in featured_products %}
-                                    <div class="product-card" onclick="toggleProduct({{ product.id }})">
-                                        <div class="product-name">{{ product.name }}</div>
-                                        <div class="product-price">${{ product.price }}</div>
-                                        <div class="product-description" id="desc-{{ product.id }}">
-                                            {{ product.description }}
+                                    <div class="product-card">
+                                        <div class="product-header" onclick="toggleProduct({{ product.id }})">
+                                            <div class="product-name">{{ product.name }}</div>
+                                            <div class="product-price">${{ product.price }}</div>
+                                            <div class="product-description" id="desc-{{ product.id }}">
+                                                {{ product.description }}
+                                            </div>
+                                        </div>
+                                        <div class="product-actions">
+                                            {% if user.is_authenticated %}
+                                                <form method="POST" action="{% url 'add_to_cart' product.id %}" class="add-to-cart-form" onclick="event.stopPropagation();">
+                                                    {% csrf_token %}
+                                                    <div class="quantity-selector">
+                                                        <label for="qty-{{ product.id }}">Qty:</label>
+                                                        <input type="number" name="quantity" id="qty-{{ product.id }}" value="1" min="1" max="{{ product.max_quantity }}" class="quantity-input" required>
+                                                    </div>
+                                                    <button type="submit" class="btn-add-cart">Add to Cart</button>
+                                                </form>
+                                            {% else %}
+                                                <div class="login-prompt">
+                                                    <a href="{% url 'admin:login' %}">Login</a> to add items to cart
+                                                </div>
+                                            {% endif %}
                                         </div>
                                     </div>
                                 {% endfor %}
@@ -301,11 +402,29 @@
                                 <h2 class="section-title">{{ category }}</h2>
                                 <div class="products-grid">
                                     {% for product in products %}
-                                        <div class="product-card" onclick="toggleProduct({{ product.id }})">
-                                            <div class="product-name">{{ product.name }}</div>
-                                            <div class="product-price">${{ product.price }}</div>
-                                            <div class="product-description" id="desc-{{ product.id }}">
-                                                {{ product.description }}
+                                        <div class="product-card">
+                                            <div class="product-header" onclick="toggleProduct({{ product.id }})">
+                                                <div class="product-name">{{ product.name }}</div>
+                                                <div class="product-price">${{ product.price }}</div>
+                                                <div class="product-description" id="desc-{{ product.id }}">
+                                                    {{ product.description }}
+                                                </div>
+                                            </div>
+                                            <div class="product-actions">
+                                                {% if user.is_authenticated %}
+                                                    <form method="POST" action="{% url 'add_to_cart' product.id %}" class="add-to-cart-form" onclick="event.stopPropagation();">
+                                                        {% csrf_token %}
+                                                        <div class="quantity-selector">
+                                                            <label for="qty-{{ product.id }}">Qty:</label>
+                                                            <input type="number" name="quantity" id="qty-{{ product.id }}" value="1" min="1" max="{{ product.max_quantity }}" class="quantity-input" required>
+                                                        </div>
+                                                        <button type="submit" class="btn-add-cart">Add to Cart</button>
+                                                    </form>
+                                                {% else %}
+                                                    <div class="login-prompt">
+                                                        <a href="{% url 'admin:login' %}">Login</a> to add items to cart
+                                                    </div>
+                                                {% endif %}
                                             </div>
                                         </div>
                                     {% endfor %}

@@ -113,6 +113,7 @@ class Command(BaseCommand):
             price=4.50,
             category="vegetables",
             is_featured=True,
+            max_quantity=50,
             vendor=vendor1
         )
 
@@ -122,6 +123,7 @@ class Command(BaseCommand):
             price=3.25,
             category="vegetables",
             is_featured=True,
+            max_quantity=30,
             vendor=vendor1
         )
 
@@ -130,6 +132,7 @@ class Command(BaseCommand):
             description="Aromatic fresh basil leaves. Perfect for pesto, pasta, and Italian dishes.",
             price=2.75,
             category="herbs",
+            max_quantity=20,
             vendor=vendor1
         )
 
@@ -138,6 +141,7 @@ class Command(BaseCommand):
             description="Sweet, crunchy organic carrots. Great for snacking or cooking.",
             price=2.50,
             category="vegetables",
+            max_quantity=100,
             vendor=vendor1
         )
 
@@ -148,6 +152,7 @@ class Command(BaseCommand):
             price=4.00,
             category="dairy",
             is_featured=True,
+            max_quantity=24,
             vendor=vendor2
         )
 
@@ -157,6 +162,7 @@ class Command(BaseCommand):
             price=8.50,
             category="dairy",
             is_featured=True,
+            max_quantity=10,
             vendor=vendor2
         )
 
@@ -165,6 +171,7 @@ class Command(BaseCommand):
             description="Thick, creamy Greek yogurt. High in protein and probiotics.",
             price=5.25,
             category="dairy",
+            max_quantity=36,
             vendor=vendor2
         )
 
@@ -173,6 +180,7 @@ class Command(BaseCommand):
             description="Rich, creamy butter made from fresh cream. Perfect for baking and cooking.",
             price=6.00,
             category="dairy",
+            max_quantity=20,
             vendor=vendor2
         )
 
@@ -183,6 +191,7 @@ class Command(BaseCommand):
             price=12.99,
             category="meat",
             is_featured=True,
+            max_quantity=25,
             vendor=vendor3
         )
 
@@ -192,6 +201,7 @@ class Command(BaseCommand):
             price=15.99,
             category="meat",
             is_featured=True,
+            max_quantity=20,
             vendor=vendor3
         )
 
@@ -200,6 +210,7 @@ class Command(BaseCommand):
             description="Thick-cut pork chops from heritage breed pigs. Raised on pasture with natural feed.",
             price=14.99,
             category="meat",
+            max_quantity=15,
             vendor=vendor3
         )
 
@@ -208,6 +219,7 @@ class Command(BaseCommand):
             description="Premium steaks from grass-fed cattle. Aged for maximum tenderness and flavor.",
             price=24.99,
             category="meat",
+            max_quantity=10,
             vendor=vendor3
         )
 
@@ -218,6 +230,7 @@ class Command(BaseCommand):
             price=1.99,
             category="vegetables",
             is_featured=True,
+            max_quantity=200,
             vendor=vendor4
         )
 
@@ -226,6 +239,7 @@ class Command(BaseCommand):
             description="Yellow cooking onions. Essential kitchen staple.",
             price=0.99,
             category="vegetables",
+            max_quantity=150,
             vendor=vendor4
         )
 
@@ -235,6 +249,7 @@ class Command(BaseCommand):
             price=1.49,
             category="fruits",
             is_featured=True,
+            max_quantity=100,
             vendor=vendor4
         )
 
@@ -243,6 +258,7 @@ class Command(BaseCommand):
             description="Fresh iceberg lettuce. Crisp and refreshing for salads.",
             price=1.25,
             category="vegetables",
+            max_quantity=50,
             vendor=vendor4
         )
 
@@ -253,6 +269,7 @@ class Command(BaseCommand):
             price=89.99,
             category="other",
             is_featured=True,
+            max_quantity=5,
             vendor=vendor5
         )
 
@@ -262,6 +279,7 @@ class Command(BaseCommand):
             price=149.99,
             category="other",
             is_featured=True,
+            max_quantity=3,
             vendor=vendor5
         )
 
@@ -270,6 +288,7 @@ class Command(BaseCommand):
             description="Curated selection of rare cheeses from around the world.",
             price=125.00,
             category="dairy",
+            max_quantity=8,
             vendor=vendor5
         )
 
@@ -278,6 +297,7 @@ class Command(BaseCommand):
             description="Premium A5 Wagyu beef. The finest beef in the world.",
             price=299.99,
             category="meat",
+            max_quantity=2,
             vendor=vendor5
         )
 
@@ -286,6 +306,7 @@ class Command(BaseCommand):
             description="Seasonal selection of wild foraged mushrooms. Chef's choice varieties.",
             price=45.00,
             category="vegetables",
+            max_quantity=12,
             vendor=vendor5
         )
 

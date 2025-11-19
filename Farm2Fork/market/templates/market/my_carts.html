@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Carts - Farm2Fork</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .header {
+            background-color: #2c5530;
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .back-btn {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border: 1px solid white;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .back-btn:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .page-header {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .page-header h1 {
+            color: #2c5530;
+            margin: 0;
+        }
+        .carts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .cart-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        .cart-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        .cart-card h3 {
+            color: #2c5530;
+            margin-top: 0;
+        }
+        .cart-vendor {
+            color: #666;
+            font-size: 0.9em;
+            margin: 5px 0;
+        }
+        .cart-info {
+            margin: 15px 0;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+        .cart-info-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+        }
+        .cart-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            font-size: 14px;
+        }
+        .btn-view {
+            background-color: #2c5530;
+            color: white;
+            flex: 1;
+        }
+        .btn-view:hover {
+            background-color: #1e3a21;
+        }
+        .btn-clear {
+            background-color: #dc3545;
+            color: white;
+        }
+        .btn-clear:hover {
+            background-color: #c82333;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .empty-state h2 {
+            color: #2c5530;
+        }
+        .empty-state p {
+            color: #666;
+            margin: 20px 0;
+        }
+        .messages {
+            margin-bottom: 20px;
+        }
+        .message {
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+        .message-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        form {
+            display: inline;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="{% url 'market_home' %}" class="back-btn">← Back to Market</a>
+        <h1>🌽 Farm2Fork</h1>
+        <div></div>
+    </div>
+
+    <div class="container">
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="message message-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="page-header">
+            <h1>My Shopping Carts</h1>
+            <p>Manage your carts from different vendors</p>
+        </div>
+
+        {% if carts %}
+            <div class="carts-grid">
+                {% for cart in carts %}
+                    <div class="cart-card">
+                        <h3>{{ cart.vendor.name }}</h3>
+                        <div class="cart-vendor">📍 {{ cart.vendor.city }}, {{ cart.vendor.state }}</div>
+                        <div class="cart-info">
+                            <div class="cart-info-item">
+                                <span>Items:</span>
+                                <span><strong>{{ cart.item_count }}</strong></span>
+                            </div>
+                            <div class="cart-info-item">
+                                <span>Total:</span>
+                                <span><strong>${{ cart.total_price }}</strong></span>
+                            </div>
+                            <div class="cart-info-item">
+                                <span>Last Updated:</span>
+                                <span>{{ cart.updated_at|date:"M j, Y" }}</span>
+                            </div>
+                        </div>
+                        <div class="cart-actions">
+                            <a href="{% url 'cart_detail' cart.vendor.id %}" class="btn btn-view">View Cart</a>
+                            <form method="POST" action="{% url 'clear_cart' cart.vendor.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-clear" onclick="return confirm('Clear cart for {{ cart.vendor.name }}? This action cannot be undone.')">Clear</button>
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <h2>No carts yet</h2>
+                <p>Start shopping to create your first cart!</p>
+                <a href="{% url 'market_home' %}" class="btn btn-view" style="text-decoration: none;">Browse Vendors</a>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
