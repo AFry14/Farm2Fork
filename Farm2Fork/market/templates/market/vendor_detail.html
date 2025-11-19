@@ -367,10 +367,10 @@
                             <div class="products-grid">
                                 {% for product in featured_products %}
                                     <div class="product-card">
-                                        <div class="product-header" onclick="toggleProduct({{ product.id }})">
+                                        <div class="product-header" onclick="toggleProduct(event)">
                                             <div class="product-name">{{ product.name }}</div>
                                             <div class="product-price">${{ product.price }}</div>
-                                            <div class="product-description" id="desc-{{ product.id }}">
+                                            <div class="product-description">
                                                 {{ product.description }}
                                             </div>
                                         </div>
@@ -403,10 +403,10 @@
                                 <div class="products-grid">
                                     {% for product in products %}
                                         <div class="product-card">
-                                            <div class="product-header" onclick="toggleProduct({{ product.id }})">
+                                            <div class="product-header" onclick="toggleProduct(event)">
                                                 <div class="product-name">{{ product.name }}</div>
                                                 <div class="product-price">${{ product.price }}</div>
-                                                <div class="product-description" id="desc-{{ product.id }}">
+                                                <div class="product-description">
                                                     {{ product.description }}
                                                 </div>
                                             </div>
@@ -486,9 +486,10 @@
             event.target.classList.add('active');
         }
 
-        function toggleProduct(productId) {
-            const card = event.currentTarget;
-            const description = document.getElementById('desc-' + productId);
+        function toggleProduct(event) {
+            const header = event.currentTarget;
+            const card = header.closest('.product-card');
+            const description = header.querySelector('.product-description');
             
             card.classList.toggle('expanded');
             description.classList.toggle('show');
