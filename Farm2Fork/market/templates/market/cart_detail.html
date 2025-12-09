@@ -207,8 +207,11 @@
 <body>
     <div class="header">
         <a href="{% url 'vendor_detail' vendor.id %}" class="back-btn">← Back to {{ vendor.name }}</a>
-        <h1>🌽 Farm2Fork</h1>
-        <a href="{% url 'my_carts' %}" class="back-btn">My Carts</a>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <h1 style="margin: 0;">🌽 Farm2Fork</h1>
+            <a href="{% url 'my_carts' %}" class="back-btn">My Carts</a>
+            {% include 'market/profile_menu.html' %}
+        </div>
     </div>
 
     <div class="container">

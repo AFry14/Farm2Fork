@@ -1,0 +1,332 @@
+{% load vendor_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Product - {{ product.name }} - Farm2Fork</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .header {
+            background-color: #2c5530;
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .back-btn {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border: 1px solid white;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .back-btn:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .form-section {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .form-title {
+            color: #2c5530;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group input[type="file"],
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        .form-group input[type="checkbox"] {
+            margin-right: 8px;
+            width: auto;
+        }
+        .form-group .checkbox-label {
+            display: flex;
+            align-items: center;
+            font-weight: normal;
+        }
+        .form-group .help-text {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        .form-group .errorlist {
+            list-style: none;
+            padding: 0;
+            margin: 5px 0 0 0;
+            color: #dc3545;
+            font-size: 14px;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: background-color 0.2s;
+        }
+        .btn-primary {
+            background-color: #28a745;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #218838;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+            margin-left: 10px;
+        }
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+        .existing-media {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .media-item {
+            position: relative;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .media-item.primary {
+            border-color: #28a745;
+        }
+        .media-item img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+        .media-item .badge {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: #28a745;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75em;
+        }
+        #stock_quantity_field {
+            display: none;
+        }
+        #stock_quantity_field.show {
+            display: block;
+        }
+    </style>
+    <script>
+        function toggleInventoryFields() {
+            const trackInventory = document.getElementById('id_track_inventory');
+            const stockField = document.getElementById('stock_quantity_field');
+            const stockInput = document.getElementById('id_stock_quantity');
+            
+            if (trackInventory.checked) {
+                stockField.classList.add('show');
+                stockInput.required = true;
+            } else {
+                stockField.classList.remove('show');
+                stockInput.required = false;
+                stockInput.value = '';
+            }
+        }
+        
+        window.onload = function() {
+            toggleInventoryFields();
+        };
+    </script>
+</head>
+<body>
+    <div class="header">
+        <a href="{% url 'vendor_products_list' vendor.id %}" class="back-btn">← Back to Products</a>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <h1 style="margin: 0;">🌽 Farm2Fork</h1>
+            {% include 'market/profile_menu.html' %}
+        </div>
+    </div>
+
+    <div class="container">
+        {% if messages %}
+            <div class="messages" style="margin-bottom: 20px;">
+                {% for message in messages %}
+                    <div class="message message-{{ message.tags }}" style="padding: 15px; margin-bottom: 10px; border-radius: 4px;">
+                        {% if message.tags == 'success' %}
+                            <div style="background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; padding: 15px; border-radius: 4px;">{{ message }}</div>
+                        {% elif message.tags == 'error' %}
+                            <div style="background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; padding: 15px; border-radius: 4px;">{{ message }}</div>
+                        {% else %}
+                            <div style="background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; padding: 15px; border-radius: 4px;">{{ message }}</div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="form-section">
+            <h2 class="form-title">Edit Product: {{ product.name }}</h2>
+
+            {% if existing_media %}
+                <h3 style="color: #2c5530; margin-top: 0; margin-bottom: 15px;">Existing Images</h3>
+                <div class="existing-media">
+                    {% for media in existing_media %}
+                        <div class="media-item {% if media.is_primary %}primary{% endif %}">
+                            <img src="{{ media.image.url }}" alt="Product image">
+                            {% if media.is_primary %}
+                                <span class="badge">Primary</span>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="{{ form.name.id_for_label }}">Product Name *</label>
+                    {{ form.name }}
+                    {% if form.name.errors %}
+                        <ul class="errorlist">{{ form.name.errors }}</ul>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.description.id_for_label }}">Description</label>
+                    {{ form.description }}
+                    {% if form.description.errors %}
+                        <ul class="errorlist">{{ form.description.errors }}</ul>
+                    {% endif %}
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="{{ form.price.id_for_label }}">Price *</label>
+                        {{ form.price }}
+                        {% if form.price.errors %}
+                            <ul class="errorlist">{{ form.price.errors }}</ul>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.category.id_for_label }}">Category *</label>
+                        {{ form.category }}
+                        {% if form.category.errors %}
+                            <ul class="errorlist">{{ form.category.errors }}</ul>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.max_quantity.id_for_label }}">Max Quantity per Order</label>
+                    {{ form.max_quantity }}
+                    {% if form.max_quantity.errors %}
+                        <ul class="errorlist">{{ form.max_quantity.errors }}</ul>
+                    {% endif %}
+                </div>
+
+                <h3 style="color: #2c5530; margin-top: 30px; margin-bottom: 15px;">Inventory</h3>
+
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        {{ form.track_inventory }}
+                        <span>Track Inventory</span>
+                    </label>
+                    {% if form.track_inventory.errors %}
+                        <ul class="errorlist">{{ form.track_inventory.errors }}</ul>
+                    {% endif %}
+                </div>
+
+                <div class="form-group" id="stock_quantity_field">
+                    <label for="{{ form.stock_quantity.id_for_label }}">Stock Quantity</label>
+                    {{ form.stock_quantity }}
+                    {% if form.stock_quantity.errors %}
+                        <ul class="errorlist">{{ form.stock_quantity.errors }}</ul>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        {{ form.is_available }}
+                        <span>Product is Available</span>
+                    </label>
+                    {% if form.is_available.errors %}
+                        <ul class="errorlist">{{ form.is_available.errors }}</ul>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        {{ form.is_featured }}
+                        <span>Feature this Product</span>
+                    </label>
+                    {% if form.is_featured.errors %}
+                        <ul class="errorlist">{{ form.is_featured.errors }}</ul>
+                    {% endif %}
+                </div>
+
+                <h3 style="color: #2c5530; margin-top: 30px; margin-bottom: 15px;">Add More Images</h3>
+
+                <div class="form-group">
+                    <label for="{{ form.images.id_for_label }}">Upload Additional Images</label>
+                    <input type="file" name="images" id="{{ form.images.id_for_label }}" multiple accept="image/*" class="form-control">
+                    {% if form.images.errors %}
+                        <ul class="errorlist">{{ form.images.errors }}</ul>
+                    {% endif %}
+                    <span class="help-text">Select additional images to add to this product (hold Ctrl/Cmd to select multiple).</span>
+                </div>
+
+                <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd;">
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <a href="{% url 'vendor_products_list' vendor.id %}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+

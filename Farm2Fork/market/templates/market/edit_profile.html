@@ -1,0 +1,285 @@
+{% load vendor_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Account - Farm2Fork</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .header {
+            background-color: #2c5530;
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .back-btn {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border: 1px solid white;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .back-btn:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .profile-section {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        .section-title {
+            color: #2c5530;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        .form-group input[readonly] {
+            background-color: #f8f9fa;
+            color: #666;
+        }
+        .form-group .errorlist {
+            list-style: none;
+            padding: 0;
+            margin: 5px 0 0 0;
+            color: #dc3545;
+            font-size: 14px;
+        }
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: background-color 0.2s;
+        }
+        .btn-primary {
+            background-color: #28a745;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #218838;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+            margin-left: 10px;
+        }
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+        .delete-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #dc3545;
+        }
+        .warning-box {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            color: #856404;
+        }
+        .vendor-links {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .vendor-links h3 {
+            margin-top: 0;
+            color: #2c5530;
+        }
+        .vendor-link {
+            display: block;
+            padding: 8px 0;
+            color: #2c5530;
+            text-decoration: none;
+        }
+        .vendor-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="{% url 'market_home' %}" class="back-btn">← Back to Home</a>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <h1 style="margin: 0;">🌽 Farm2Fork</h1>
+            {% include 'market/profile_menu.html' %}
+        </div>
+    </div>
+
+    <div class="container">
+        {% if messages %}
+            <div class="messages" style="margin-bottom: 20px;">
+                {% for message in messages %}
+                    <div class="message message-{{ message.tags }}" style="padding: 15px; margin-bottom: 10px; border-radius: 4px;">
+                        {% if message.tags == 'success' %}
+                            <div style="background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; padding: 15px; border-radius: 4px;">{{ message }}</div>
+                        {% elif message.tags == 'error' %}
+                            <div style="background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; padding: 15px; border-radius: 4px;">{{ message }}</div>
+                        {% else %}
+                            <div style="background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; padding: 15px; border-radius: 4px;">{{ message }}</div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="profile-section">
+            <h2 class="section-title">My Account</h2>
+
+            {% if user_vendors %}
+                <div class="vendor-links">
+                    <h3>My Vendor Profiles</h3>
+                    {% for vendor in user_vendors %}
+                        <a href="{% url 'vendor_detail' vendor.id %}" class="vendor-link">→ {{ vendor.name }}</a>
+                    {% endfor %}
+                    <a href="{% url 'vendor_dashboard' %}" class="vendor-link" style="font-weight: bold; margin-top: 10px;">→ Vendor Dashboard</a>
+                </div>
+            {% endif %}
+
+            <h3 style="color: #2c5530; margin-top: 30px; margin-bottom: 15px;">Profile Information</h3>
+
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="update_profile">
+                
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" value="{{ user.username }}" readonly>
+                    <span style="font-size: 12px; color: #666;">Username cannot be changed</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ profile_form.email.id_for_label }}">Email *</label>
+                    {{ profile_form.email }}
+                    {% if profile_form.email.errors %}
+                        <ul class="errorlist">{{ profile_form.email.errors }}</ul>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ profile_form.first_name.id_for_label }}">First Name</label>
+                    {{ profile_form.first_name }}
+                    {% if profile_form.first_name.errors %}
+                        <ul class="errorlist">{{ profile_form.first_name.errors }}</ul>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ profile_form.last_name.id_for_label }}">Last Name</label>
+                    {{ profile_form.last_name }}
+                    {% if profile_form.last_name.errors %}
+                        <ul class="errorlist">{{ profile_form.last_name.errors }}</ul>
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="btn btn-primary">Update Profile</button>
+            </form>
+        </div>
+
+        <div class="profile-section">
+            <h3 class="section-title">Change Password</h3>
+
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="change_password">
+                
+                <div class="form-group">
+                    <label for="{{ password_form.old_password.id_for_label }}">Current Password *</label>
+                    {{ password_form.old_password }}
+                    {% if password_form.old_password.errors %}
+                        <ul class="errorlist">{{ password_form.old_password.errors }}</ul>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ password_form.new_password1.id_for_label }}">New Password *</label>
+                    {{ password_form.new_password1 }}
+                    {% if password_form.new_password1.errors %}
+                        <ul class="errorlist">{{ password_form.new_password1.errors }}</ul>
+                    {% endif %}
+                    {% if password_form.new_password1.help_text %}
+                        <span style="font-size: 12px; color: #666;">{{ password_form.new_password1.help_text }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ password_form.new_password2.id_for_label }}">Confirm New Password *</label>
+                    {{ password_form.new_password2 }}
+                    {% if password_form.new_password2.errors %}
+                        <ul class="errorlist">{{ password_form.new_password2.errors }}</ul>
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="btn btn-primary">Change Password</button>
+            </form>
+        </div>
+
+        <div class="profile-section">
+            <div class="delete-section">
+                <h3 style="color: #dc3545; margin-top: 0;">Delete Account</h3>
+                <div class="warning-box">
+                    <strong>⚠️ Warning</strong>
+                    <p>Deleting your account will permanently remove all your data, including:</p>
+                    <ul>
+                        <li>Your profile information</li>
+                        <li>Your cart items</li>
+                        <li>Your vendor team memberships (if any)</li>
+                    </ul>
+                    <p><strong>This action cannot be undone.</strong></p>
+                </div>
+                <form method="POST" onsubmit="return confirm('Are you absolutely sure you want to delete your account? This action cannot be undone and all your data will be permanently deleted.');">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="delete_account">
+                    <button type="submit" class="btn btn-danger">Delete My Account</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

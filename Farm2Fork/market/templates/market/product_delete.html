@@ -1,0 +1,139 @@
+{% load vendor_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Product - {{ product.name }} - Farm2Fork</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .header {
+            background-color: #2c5530;
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .back-btn {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border: 1px solid white;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .back-btn:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .confirmation-section {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .section-title {
+            color: #2c5530;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+        .warning-box {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            color: #856404;
+        }
+        .warning-box h3 {
+            margin-top: 0;
+            color: #856404;
+        }
+        .product-info {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .product-info strong {
+            color: #2c5530;
+        }
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: background-color 0.2s;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+            margin-left: 10px;
+        }
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="{% url 'vendor_products_list' vendor.id %}" class="back-btn">← Back to Products</a>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <h1 style="margin: 0;">🌽 Farm2Fork</h1>
+            {% include 'market/profile_menu.html' %}
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="confirmation-section">
+            <h2 class="section-title">Delete Product</h2>
+
+            <div class="warning-box">
+                <h3>⚠️ Warning</h3>
+                <p>Are you sure you want to delete <strong>{{ product.name }}</strong>?</p>
+                <p>This action cannot be undone. All product information, images, and data will be permanently deleted.</p>
+                {% if in_carts %}
+                    <p style="color: #856404; font-weight: bold;">
+                        ⚠️ This product is currently in {{ cart_count }} active cart(s). 
+                        Deleting it will remove it from those carts.
+                    </p>
+                {% endif %}
+            </div>
+
+            <div class="product-info">
+                <p><strong>Product:</strong> {{ product.name }}</p>
+                <p><strong>Price:</strong> ${{ product.price }}</p>
+                <p><strong>Category:</strong> {{ product.get_category_display }}</p>
+                <p><strong>Vendor:</strong> {{ vendor.name }}</p>
+            </div>
+
+            <form method="POST">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Yes, Delete Product</button>
+                <a href="{% url 'vendor_products_list' vendor.id %}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+

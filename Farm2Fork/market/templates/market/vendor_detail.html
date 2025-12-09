@@ -1,3 +1,4 @@
+{% load vendor_tags %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -94,6 +95,20 @@
         }
         .contact-btn:hover {
             background-color: #218838;
+        }
+        .team-btn {
+            background-color: #2c5530;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 4px;
+            display: inline-block;
+            margin-top: 15px;
+            text-align: center;
+            width: 85%;
+        }
+        .team-btn:hover {
+            background-color: #1e3a21;
         }
         .tabs {
             background-color: white;
@@ -277,6 +292,7 @@
                 </a>
                 <a href="{% url 'my_carts' %}" class="back-btn">My Carts</a>
             {% endif %}
+            {% include 'market/profile_menu.html' %}
         </div>
     </div>
 
@@ -349,6 +365,19 @@
                     <a href="mailto:{{ vendor.email }}?subject=Interest in your products" class="contact-btn">
                         Contact Vendor
                     </a>
+                    {% if user.is_authenticated %}
+                        {% if user.is_staff or user|is_vendor_team_member:vendor %}
+                            <a href="{% url 'vendor_products_list' vendor.id %}" class="team-btn" style="background-color: #28a745;">
+                                📦 Manage Products
+                            </a>
+                            <a href="{% url 'vendor_team_list' vendor.id %}" class="team-btn">
+                                👥 View Vendor Team
+                            </a>
+                            <a href="{% url 'edit_vendor_profile' vendor.id %}" class="team-btn" style="background-color: #2c5530;">
+                                ✏️ Edit Profile
+                            </a>
+                        {% endif %}
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -386,7 +415,7 @@
                                                 </form>
                                             {% else %}
                                                 <div class="login-prompt">
-                                                    <a href="{% url 'admin:login' %}">Login</a> to add items to cart
+                                                    <a href="{% url 'login' %}">Login</a> to add items to cart
                                                 </div>
                                             {% endif %}
                                         </div>
@@ -422,7 +451,7 @@
                                                     </form>
                                                 {% else %}
                                                     <div class="login-prompt">
-                                                        <a href="{% url 'admin:login' %}">Login</a> to add items to cart
+                                                        <a href="{% url 'login' %}">Login</a> to add items to cart
                                                     </div>
                                                 {% endif %}
                                             </div>
@@ -442,20 +471,39 @@
                 <div id="reviews-tab" class="tab-panel" style="display: none;">
                     <div class="reviews-section">
                         {% if reviews %}
-                            <h2 class="section-title">Customer Reviews</h2>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                                <h2 class="section-title" style="margin: 0;">Customer Reviews</h2>
+                                {% if user.is_authenticated %}
+                                    {% if user.is_staff or user|is_vendor_team_member:vendor %}
+                                        <a href="{% url 'vendor_reviews' vendor.id %}" style="background-color: #2c5530; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px;">Manage Reviews</a>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
                             {% for review in reviews %}
                                 <div class="review">
                                     <div class="review-header">
                                         <div class="reviewer-name">{{ review.consumer_name }}</div>
                                         <div class="review-rating">
                                             {% for i in "12345" %}
-                                                {% if forloop.counter <= review.rating %}⭐{% endif %}
+                                                {% if forloop.counter <= review.rating %}⭐{% else %}☆{% endif %}
                                             {% endfor %}
+                                            ({{ review.rating }}/5)
                                         </div>
                                     </div>
                                     <div class="review-date">{{ review.created_at|date:"F j, Y" }}</div>
                                     {% if review.comment %}
                                         <div class="review-comment">{{ review.comment }}</div>
+                                    {% endif %}
+                                    
+                                    {% if review.has_response and review.response.is_public %}
+                                        <div style="background-color: #f8f9fa; border-left: 4px solid #2c5530; padding: 15px; margin-top: 15px; border-radius: 4px;">
+                                            <div style="font-weight: bold; color: #2c5530; margin-bottom: 8px;">
+                                                Vendor Response
+                                                <span style="background-color: #28a745; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.75em; margin-left: 8px;">Public</span>
+                                            </div>
+                                            <div style="color: #333; line-height: 1.6;">{{ review.response.response_text }}</div>
+                                            <div style="color: #666; font-size: 0.9em; margin-top: 8px;">{{ review.response.created_at|date:"F j, Y" }}</div>
+                                        </div>
                                     {% endif %}
                                 </div>
                             {% endfor %}

@@ -17,6 +17,43 @@
             padding: 20px;
             text-align: center;
             margin-bottom: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 1200px;
+        }
+        .header-text {
+            flex: 1;
+        }
+        .become-vendor-btn {
+            background-color: #28a745;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+            transition: background-color 0.2s;
+            white-space: nowrap;
+        }
+        .become-vendor-btn:hover {
+            background-color: #218838;
+        }
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .become-vendor-btn {
+                width: 100%;
+                text-align: center;
+            }
         }
         .search-filters {
             background-color: white;
@@ -131,8 +168,16 @@
 </head>
 <body>
     <div class="header">
-        <h1>🌽 Farm2Fork Market</h1>
-        <p>Connect with local farmers and producers</p>
+        <div class="header-content">
+            <div class="header-text">
+                <h1 style="margin: 0;">🌽 Farm2Fork Market</h1>
+                <p style="margin: 5px 0 0 0;">Connect with local farmers and producers</p>
+            </div>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <a href="{% url 'apply_to_be_vendor' %}" class="become-vendor-btn">🚀 Become a Vendor</a>
+                {% include 'market/profile_menu.html' %}
+            </div>
+        </div>
     </div>
 
     <div class="search-filters">
